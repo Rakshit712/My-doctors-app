@@ -1,3 +1,10 @@
+const isValidName = (name) => {
+    return /\S/.test(name);
+};
+
+const isValidGender = (gender) => {
+    return /\S/.test(gender);
+};
 const isStrongPassword = (password) => {
     const isLongEnough = password.length >= 7;
     const hasUpperCase = /[A-Z]/.test(password);
@@ -20,7 +27,8 @@ const isValiduserData = (userData)=>{
     if(!isStrongPassword(userData.password))return [false, 'Password should be at least  8 characters long and contain a mix of uppercase, lowercase and special characters  '];
     if(!isValidMobileNumber(userData.contactNo)) return[false,'mobile number should be of 10 digits'];
     if(!isValidEmail(userData.email)) return [false,'email is not valid '];
-
+    if(!isValidGender(userData.gender))return[false,'email is not valid '];
+    if(!isValidName(userData.name))return[false,'name is not valid']
     return [true, "valid data"];
 
 }
