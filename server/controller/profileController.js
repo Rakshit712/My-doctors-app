@@ -7,6 +7,17 @@ async function addProfile(req,res){
         const profileData = req.body;
         const userId = req.user.payload.userId;
         profileData.userId = userId;
+
+        const alreadyExist = await Profile.findOne({userId:userId});
+        if(alreadyExist){
+            return res.status(403).json(
+                {
+                    status : "failure",
+                    message : "Profile of this user already exist"
+                    
+                }
+            )
+        }
         const newProfile = await Profile.create(profileData);
         if(newProfile){
             return res.status(201).json({
