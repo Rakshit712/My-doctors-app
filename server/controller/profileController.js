@@ -5,7 +5,8 @@ const errorWrapper = require("../util/errorWrapper");
 async function addProfile(req,res){
     try {
         const profileData = req.body;
-
+        const userId = req.user.payload.userId;
+        profileData.userId = userId;
         const newProfile = await Profile.create(profileData);
         if(newProfile){
             return res.status(201).json({
