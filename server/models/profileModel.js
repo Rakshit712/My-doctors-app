@@ -30,6 +30,12 @@ const profileSchema = mongoose.Schema(
             },
             pincode:{
                 type:Number,
+                validate: {
+                    validator: function(value) {
+                        return /^[1-9][0-9]{5}$/.test(value);
+                    },
+                    message: props => `${props.value} is not a valid pincode. Pincode should be a 6-digit number and should not start with zero.`
+                }
             },
             country:{
                 type:String,
