@@ -12,7 +12,7 @@ const profileSchema = mongoose.Schema(
         bloodGroup:{
             type: String,
             required: true,
-            enum:["A+","A-","B+", "AB+", "AB-","O+","0-"]
+            enum:["A+","A-","B+", "AB+", "AB-","O+","O-"]
         },
         address:
             {
