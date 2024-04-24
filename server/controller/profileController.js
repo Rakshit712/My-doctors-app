@@ -62,6 +62,15 @@ async function updateProfile(req,res){
     const id = req.params.id;
     const profileData = req.body;
     try {
+
+        const [isValidProfile,message] = isValidProfileData(profileData);
+        if(!isValidProfile){
+            return res.status(403).json({
+                status: "invaled data",
+                message
+            })
+        }
+
         const profile = await Profile.findByIdAndUpdate(id,profileData,{new:true});
         if(profile){
             return res.status(200).json({

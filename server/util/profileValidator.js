@@ -7,14 +7,24 @@ const isValidfromYear = (fromYear) => {
 
 const isValidToYear = (toYear, fromYear) => {
     
+    const currentYear = new Date().getFullYear();
+    
     if (!/^\d{4}$/.test(toYear)) return false;
- 
-    return parseInt(toYear) >= parseInt(fromYear);
+    
+    const numericToYear = parseInt(toYear);
+    const numericFromYear = parseInt(fromYear);
+
+    return numericToYear >= numericFromYear && numericToYear <= currentYear;
 };
 
 const isValidYearOfCompletion = (yearOfCompletion) => {
    
-    return /^\d{4}$/.test(yearOfCompletion);
+    const currentYear = new Date().getFullYear().toString();
+
+    if(!/^\d{4}$/.test(yearOfCompletion)) return false;
+
+    return yearOfCompletion <= currentYear;
+
 };
 const isValidFromMonth = (fromMonth) => {
     return /^(0[1-9]|1[0-2])$/.test(fromMonth);
