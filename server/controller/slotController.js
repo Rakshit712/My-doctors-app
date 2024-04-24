@@ -1,5 +1,7 @@
 const Slot = require("../models/slotModel");
 const errorWrapper = require("../util/errorWrapper");
+const isValidSlotDetails = require("../util/slotValidator");
+
 
 async function addSlot(req, res) {
     try {
@@ -10,6 +12,14 @@ async function addSlot(req, res) {
         const startTime = slotData.startTime;
         const endTime = slotData.endTime;
         
+        const [isValidSlot,message] = isValidSlotDetails(slotData);
+        if(!isValidSlot){
+            return res.status(403).json({
+                status: "invaled data",
+                message
+            })
+        }
+
         const existingSlot = await Slot.findOne({
             doctorId: doctorId,
             $or: [
@@ -24,6 +34,8 @@ async function addSlot(req, res) {
                 message: "failed to create a new slot as the slot already exist at3 the selected time"
             })
         }
+
+       
         const newSlot = await Slot.create(slotData);
         if (newSlot) {
             return res.status(201).json({

@@ -1,5 +1,6 @@
 const Profile = require("../models/profileModel");
 const errorWrapper = require("../util/errorWrapper");
+const isValidProfileData = require("../util/profileValidator");
 
 
 async function addProfile(req,res){
@@ -18,6 +19,16 @@ async function addProfile(req,res){
                 }
             )
         }
+
+        const [isValidProfile,message] = isValidProfileData(profileData);
+        if(!isValidProfile){
+            return res.status(403).json({
+                status: "invaled data",
+                message
+            })
+        }
+        
+
         const newProfile = await Profile.create(profileData);
         if(newProfile){
             return res.status(201).json({
