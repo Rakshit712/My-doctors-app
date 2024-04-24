@@ -9,6 +9,18 @@ const specialitySchema = mongoose.Schema(
         imageUrl:{
             type:String
         },
+        enabled:{
+            type:Boolean,
+            default:true
+        },
+        reviewed:{
+            type:Boolean,
+            default:true
+        },
+        deleted:{
+            type:Boolean,
+            default:false
+        }
 
     }
 )
