@@ -86,7 +86,7 @@ async function updateProfile(req,res){
             })
         }
 
-    } catch (error) {
+    } catch (err) {
         throw {
             statusCode: err.statusCode || 500,
             status: err.status || "Something went wrong",

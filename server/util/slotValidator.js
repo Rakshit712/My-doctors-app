@@ -8,8 +8,12 @@ const isValidendTime = (endTime) => {
 
 
 const isValidSlotDetails = (slotData)=>{
-    if(!isValidstartTime(slotData.startTime))return[false,'startTime is not valid '];
-    if(!isValidendTime(slotData.endTime))return[false,'endTime is not valid']
+
+    const startTime = new Date(slotData.startTime);
+    const endTime = new Date(slotData.endTime);
+    
+    if(!isValidstartTime(startTime))return[false,'startTime is not valid '];
+    if(!isValidendTime(endTime))return[false,'endTime is not valid']
     return [true, "valid data"];
 
 }

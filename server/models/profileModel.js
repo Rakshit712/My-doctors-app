@@ -92,7 +92,7 @@ const profileSchema = mongoose.Schema(
             }
         ],
         consultationFee:{
-            type:String
+            type:Number
         },
         licenceNumber:{
             type:String,
