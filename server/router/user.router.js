@@ -1,10 +1,12 @@
 const express = require("express");
-const { signUp, logIn } = require("../controller/userController");
+const { signUp, logIn, getProfile, updateProfile } = require("../controller/userController");
+const { verifyToken } = require("../util/userAuthentication");
 
 const Router = express.Router();
 
 Router.post("/register",signUp)
 Router.post("/login", logIn)
-
+Router.put("/profile/:id",verifyToken,updateProfile)
+Router.get("/profile/:id",verifyToken,getProfile)
 
 module.exports = Router;
