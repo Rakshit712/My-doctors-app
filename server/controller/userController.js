@@ -181,84 +181,13 @@ async function getProfile(req, res) {
     }
 }
 
-async function filterDoctors(req, res) {
-    try {
-        let name;
-        const speciality = req.query.speciality;
-        if (req.query.name) {
-            name = req.query.name.toString();
-        }
-        //console.log(name)
-        //console.log(speciality)
-        let doctors = [];
 
-        if (speciality) {
-            const specks = await Speciality.findOne({ name: { $regex: speciality, $options: 'i' } });
-            if(!specks){
-                return res.status(404).json(
-                    {
-                        status:"failure",
-                        message:"no such specialities found"
-                    }
-                )
-            }
-            const specialityId = specks._id.toString();
-           // console.log(specialityId)
-            if (!specialityId) {
-                return res.status(400).json(
-                    {
-                        status: "failure",
-                        message: "speciality not found"
-                    }
-                )
-            }
-            if(name){
-                doctors = await User.find({ speciality: specialityId._id, name: name }).populate("profile.specialities");
-
-            }
-            else{
-                doctors = await User.find({ speciality: specialityId._id }).populate("profile.specialities"); 
-            }
-        }
-     
-        else if (name) {333
-            doctors = await User.find({ name: name }).populate("profile.specialities");
-        }
-
-        if (!doctors[0]) {
-            return res.status(404).json(
-                {
-                    status: "failure",
-                    message: "doctors not found"
-                }
-            )
-        }
-        return res.status(200).json(
-            {
-                status: "success",
-                message: "doctors found",
-                total: doctors.length,
-                data: doctors
-            }
-        )
-
-
-    } catch (err) {
-        throw {
-            statusCode: err.statusCode || 500,
-            status: err.status || "Something went wrong",
-            message: err.message || "Internal server error"
-
-        }
-    }
-
-}
 
 module.exports = {
     signUp: errorWrapper(signUp)
     , logIn: errorWrapper(logIn),
     updateProfile: errorWrapper(updateProfile),
     getProfile: errorWrapper(getProfile),
-    filterDoctors: errorWrapper(filterDoctors),
+   
 
 }
