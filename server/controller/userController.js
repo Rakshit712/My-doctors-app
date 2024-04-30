@@ -89,6 +89,8 @@ async function logIn(req, res) {
         status: "Success",
         message: "User logged in successfully",
         token: token,
+        data:user
+        
     })
 }
 
@@ -184,76 +186,53 @@ async function getProfile(req, res) {
 
 async function filterDoctors(req, res) {
     try {
-        let name;
         const speciality = req.query.speciality;
-        if (req.query.name) {
-            name = req.query.name.toString();
-        }
-        //console.log(name)
-        //console.log(speciality)
-        let doctors = [];
+        let name = req.query.name ? new RegExp(req.query.name, "i") : null;
 
+        let filter = {};
         if (speciality) {
             const specks = await Speciality.findOne({ name: { $regex: speciality, $options: 'i' } });
-            if(!specks){
-                return res.status(404).json(
-                    {
-                        status:"failure",
-                        message:"no such specialities found"
-                    }
-                )
-            }
-            const specialityId = specks._id.toString();
-           // console.log(specialityId)
-            if (!specialityId) {
-                return res.status(400).json(
-                    {
-                        status: "failure",
-                        message: "speciality not found"
-                    }
-                )
-            }
-            if(name){
-                doctors = await User.find({ speciality: specialityId._id, name: name }).populate("profile.specialities");
-
-            }
-            else{
-                doctors = await User.find({ speciality: specialityId._id }).populate("profile.specialities"); 
-            }
-        }
-     
-        else if (name) {333
-            doctors = await User.find({ name: name }).populate("profile.specialities");
-        }
-
-        if (!doctors[0]) {
-            return res.status(404).json(
-                {
+            if (!specks) {
+                return res.status(404).json({
                     status: "failure",
-                    message: "doctors not found"
-                }
-            )
-        }
-        return res.status(200).json(
-            {
-                status: "success",
-                message: "doctors found",
-                total: doctors.length,
-                data: doctors
+                    message: "No such speciality found"
+                });
             }
-        )
-
-
-    } catch (err) {
-        throw {
-            statusCode: err.statusCode || 500,
-            status: err.status || "Something went wrong",
-            message: err.message || "Internal server error"
-
+            filter["profile.specialities"] = specks._id.toString();
         }
-    }
 
+        if (name) {
+            filter["name"] = name;
+        }
+        //console.log(filter)
+        const doctors = await User.find(filter).populate("profile.specialities");
+
+        if (!doctors || doctors.length === 0) {
+            return res.status(404).json({
+                status: "failure",
+                message: "Doctors not found"
+            });
+        }
+
+        return res.status(200).json({
+            status: "success",
+            message: "Doctors found",
+            total: doctors.length,
+            data: doctors
+        });
+    } catch (err) {
+       // console.error(err);
+       throw {
+        statusCode: err.statusCode || 500,
+        status: err.status || "Something went wrong",
+        message: err.message || "Internal server error"
+
+    }
+    }
 }
+
+
+
 
 module.exports = {
     signUp: errorWrapper(signUp)
