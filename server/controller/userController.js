@@ -199,6 +199,7 @@ async function filterDoctors(req, res) {
                 });
             }
             filter["profile.specialities"] = specks._id.toString();
+            filter["isDoctor"] = true;
         }
 
         if (name) {
