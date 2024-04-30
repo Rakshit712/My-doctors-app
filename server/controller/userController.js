@@ -190,6 +190,7 @@ async function filterDoctors(req, res) {
         let name = req.query.name ? new RegExp(req.query.name, "i") : null;
 
         let filter = {};
+        filter["isDoctor"] = true;
         if (speciality) {
             const specks = await Speciality.findOne({ name: { $regex: speciality, $options: 'i' } });
             if (!specks) {
@@ -199,13 +200,14 @@ async function filterDoctors(req, res) {
                 });
             }
             filter["profile.specialities"] = specks._id.toString();
-            filter["isDoctor"] = true;
+            
         }
 
         if (name) {
             filter["name"] = name;
+            
         }
-        //console.log(filter)
+        console.log(filter)
         const doctors = await User.find(filter).populate("profile.specialities");
 
         if (!doctors || doctors.length === 0) {
@@ -232,7 +234,49 @@ async function filterDoctors(req, res) {
     }
 }
 
+async function changePassword(req,res){
+    try {
+        const id = req.params.id;
+        const { oldPassword, newPassword } = req.body;
+        const user = await User.findById(id);
+        if (!user) {
+            throw {
+                statusCode: 404,
+                status: "fail",
+                message: "User not found"
+            }
+        }
+        const isPasswordCorrect = await bcrypt.compare(oldPassword, user.password);
+        
+        if (!isPasswordCorrect) {
+            throw {
+                statusCode: 401,
+                status: 'Login Failure',
+                message: "Wrong old Password"
 
+            }
+
+        }
+        Password = await bcrypt.hash(newPassword, 10);
+        user.password = Password;
+        await user.save();
+        res.status(200).json({
+            status: "success",
+            message: "Password changed successfully"
+        })
+
+        
+        
+        
+    } catch (err) {
+        throw {
+            statusCode: err.statusCode || 500,
+            status: err.status || "Something went wrong",
+            message: err.message || "Internal server error"
+
+        }
+    }
+}
 
 
 module.exports = {
@@ -241,6 +285,7 @@ module.exports = {
     updateProfile: errorWrapper(updateProfile),
     getProfile: errorWrapper(getProfile),
     filterDoctors: errorWrapper(filterDoctors),
+    changePassword : errorWrapper(changePassword),
    
 
 }
