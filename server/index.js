@@ -11,7 +11,9 @@ const Router = require("./router")
 
 
 server.use("/api/auth",Router.userRouter);
-
+server.use("/api/profile",Router.profileRouter);
+server.use("/api/slot",Router.slotRouter);
+server.use("/api/specialities",Router.SpecialityRouter);
 
 
 const mongoose = require('mongoose');
