@@ -16,7 +16,6 @@ server.use("/api/slot",Router.slotRouter);
 server.use("/api/specialities",Router.SpecialityRouter);
 
 
-
 const mongoose = require('mongoose');
 
 

@@ -4,6 +4,8 @@ const generateToken = require("../util/generateToken");
 const errorWrapper = require("../util/errorWrapper");
 const bcrypt = require("bcrypt");
 const Speciality = require("../models/specialityModel");
+const isValiduserPassword = require("../util/passwordValidator")
+
 
 
 async function signUp(req, res) {
@@ -238,6 +240,12 @@ async function changePassword(req,res){
     try {
         const id = req.params.id;
         const { oldPassword, newPassword } = req.body;
+        if(oldPassword===newPassword){
+            return res.status(400).json({
+                status: "failure",
+                message: "Old and new password cannot be same"
+            });
+        }
         const user = await User.findById(id);
         if (!user) {
             throw {
@@ -257,6 +265,15 @@ async function changePassword(req,res){
             }
 
         }
+        console.log(newPassword)
+        const [isValidPassword, message] = isValiduserPassword(newPassword);
+        console.log(isValidPassword)
+        if (!isValidPassword) {
+            return res.status(403).json({
+                status: "invaled data",
+                message
+            })
+        }
         Password = await bcrypt.hash(newPassword, 10);
         user.password = Password;
         await user.save();
@@ -269,6 +286,7 @@ async function changePassword(req,res){
         
         
     } catch (err) {
+        console.log(err);
         throw {
             statusCode: err.statusCode || 500,
             status: err.status || "Something went wrong",
