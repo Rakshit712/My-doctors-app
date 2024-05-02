@@ -1,11 +1,10 @@
 const express = require("express");
-const { addProfile, updateProfile, getProfile } = require("../controller/profileController");
+const { getProfile, updateProfile } = require("../controller/profileController");
 const { verifyToken } = require("../util/userAuthentication");
 
 const Router = express.Router();
 
-Router.post("/",verifyToken,addProfile);
-Router.put("/:id",verifyToken,updateProfile);
-Router.get("/:id", verifyToken,getProfile)
+Router.get("/",verifyToken,getProfile)
+Router.patch("/:id",verifyToken,updateProfile)
 
 module.exports = Router;
