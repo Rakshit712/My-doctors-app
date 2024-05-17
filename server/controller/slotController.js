@@ -90,8 +90,54 @@ async function deleteSlot(req, res) {
         }
     }
 }
+
+async function getSlot(req,res){
+    try {
+        const doctorId = req.params.id;
+        const slot = await Slot.find({doctorId:doctorId})
+
+        if(!slot){
+            return res.status(400).json(
+                {
+                    status:"failure",
+                    message:"no slot found for this doctor"
+                }
+            )
+        }
+        else{
+            if(slot.count<=slot.size){
+            return res.status(200).json(
+                {
+                    status:"success",
+                    message:"slot fetched successfully",
+                    total:slot.length,
+                    data:slot
+                }
+            )}
+            else{
+                return res.status(200).json(
+                    {
+                        status:"success",
+                        message:"all slots are booked....",
+                        data:[]
+                    }
+                )
+
+            }
+        }
+    } catch (err) {
+        throw {
+            statusCode: err.statusCode || 500,
+            status: err.status || "Something went wrong",
+            message: err.message || "Internal server error"
+
+        }
+    }
+}
+
 module.exports = {
     addSlot: errorWrapper(addSlot)
-    , deleteSlot: errorWrapper(deleteSlot)
+    , deleteSlot: errorWrapper(deleteSlot),
+    getSlot:errorWrapper(getSlot)
 
 }

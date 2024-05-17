@@ -20,6 +20,14 @@ const slotSchema = mongoose.Schema(
             type:Number,
             default:1
         },
+        count:{
+            type:Number,
+            default:0
+        },
+        isBooked:{
+            type:Boolean,
+            default:false
+        }
 
     }
 )

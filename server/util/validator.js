@@ -6,7 +6,9 @@ const isValidGender = (gender) => {
     return /\S/.test(gender);
 };
 const isStrongPassword = (password) => {
+    console.log("hellooo")
     const isLongEnough = password.length >= 7;
+    
     const hasUpperCase = /[A-Z]/.test(password);
     const hasLowerCase = /[a-z]/.test(password);
     const hasNumbers = /\d/.test(password);
@@ -58,38 +60,58 @@ const isValidToMonth = (toMonth) => {
     return /^(0[1-9]|1[0-2])$/.test(toMonth);
 }
 
-const isValiduserData = (userData)=>{
-
-    if(userData.password && userData.contactNo && userData.email &&userData.email && userData.gender && userData.name){
-        if(!isStrongPassword(userData.password))return [false, 'Password should be at least  8 characters long and contain a mix of uppercase, lowercase and special characters  '];
-        if(!isValidMobileNumber(userData.contactNo)) return[false,'mobile number should be of 10 digits'];
-        if(!isValidEmail(userData.email)) return [false,'email is not valid '];
-        if(!isValidGender(userData.gender))return[false,'gender is not valid '];
-        if(!isValidName(userData.name))return[false,'name is not valid'];
-        }
-    if(userData.profile){
-
-    const { experience, qualification } = userData.profile;
+const isValiduserData = (userData) => {
+    
+    if (userData.profile) {
+        const { experience, qualification } = userData.profile;
 
         if (experience) {
             for (const exp of experience) {
-                if (!isValidfromYear(exp.fromYear)) return [false, 'fromYear is not valid'];
-                if (!isValidToYear(exp.toYear, exp.fromYear)) return [false, 'toYear is not valid'];
-                if (!isValidFromMonth(exp.fromMonth)) return [false,'from month is not valid']
-                if (!isValidToMonth(exp.toMonth)) return [false,'to month is not valid']
+                if (!isValidfromYear(exp.fromYear)) return [false, 'From year is not valid.'];
+                if (!isValidToYear(exp.toYear, exp.fromYear)) return [false, 'To year is not valid.'];
+                if (!isValidFromMonth(exp.fromMonth)) return [false, 'From month is not valid.'];
+                if (!isValidToMonth(exp.toMonth)) return [false, 'To month is not valid.'];
             }
         }
 
         if (qualification) {
             for (const qual of qualification) {
-                if (!isValidYearOfCompletion(qual.yearOfCompletion)) return [false, 'yearOfCompletion is not valid'];
+                if (!isValidYearOfCompletion(qual.yearOfCompletion)) return [false, 'Year of completion is not valid.'];
             }
         }
+
+        // If profile data exists and it's valid, return valid
+        return [true, 'Valid data.'];
     }
 
-    return [true, "valid data"];
+    // If profile data doesn't exist, then validate required fields
+    if (!userData.password || !userData.contactNo || !userData.email || !userData.gender || !userData.name) {
+        return [false, 'Please provide all required fields.'];
+    }
 
-}
+    if (!isStrongPassword(userData.password)) {
+        return [false, 'Password should be at least 8 characters long and contain a mix of uppercase, lowercase, and special characters.'];
+    }
+
+    if (!isValidMobileNumber(userData.contactNo)) {
+        return [false, 'Mobile number should be a 10-digit number.'];
+    }
+
+    if (!isValidEmail(userData.email)) {
+        return [false, 'Email is not valid.'];
+    }
+
+    if (!isValidGender(userData.gender)) {
+        return [false, 'Gender is not valid.'];
+    }
+
+    if (!isValidName(userData.name)) {
+        return [false, 'Name is not valid.'];
+    }
+
+    return [true, 'Valid data.'];
+};
+
 
 module.exports = isValiduserData;
 
