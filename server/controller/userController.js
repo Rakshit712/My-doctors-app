@@ -11,7 +11,7 @@ const isValiduserPassword = require("../util/passwordValidator")
 async function signUp(req, res) {
     try {
         const userData = req.body;
-
+    
         //console.log(userData)
         const userExist = await User.findOne({ email: userData.email });
         if (userExist) {
@@ -90,8 +90,12 @@ async function logIn(req, res) {
     res.status(200).json({
         status: "Success",
         message: "User logged in successfully",
-        token: token,
-        data:user
+        data:{
+            token:token,
+            user:user,
+            isDoctor:user.isDoctor,
+            
+        }
         
     })
 }
@@ -100,55 +104,7 @@ async function logIn(req, res) {
 
 
 
-async function filterDoctors(req, res) {
-    try {
-        const speciality = req.query.speciality;
-        let name = req.query.name ? new RegExp(req.query.name, "i") : null;
 
-        let filter = {};
-        filter["isDoctor"] = true;
-        if (speciality) {
-            const specks = await Speciality.findOne({ name: { $regex: speciality, $options: 'i' } });
-            if (!specks) {
-                return res.status(404).json({
-                    status: "failure",
-                    message: "No such speciality found"
-                });
-            }
-            filter["profile.specialities"] = specks._id.toString();
-            
-        }
-
-        if (name) {
-            filter["name"] = name;
-            
-        }
-        console.log(filter)
-        const doctors = await User.find(filter).populate("profile.specialities");
-
-        if (!doctors || doctors.length === 0) {
-            return res.status(404).json({
-                status: "failure",
-                message: "Doctors not found"
-            });
-        }
-
-        return res.status(200).json({
-            status: "success",
-            message: "Doctors found",
-            total: doctors.length,
-            data: doctors
-        });
-    } catch (err) {
-       // console.error(err);
-       throw {
-        statusCode: err.statusCode || 500,
-        status: err.status || "Something went wrong",
-        message: err.message || "Internal server error"
-
-    }
-    }
-}
 
 async function changePassword(req,res){
     try {
@@ -214,7 +170,6 @@ async function changePassword(req,res){
 module.exports = {
     signUp: errorWrapper(signUp)
     , logIn: errorWrapper(logIn),
-    filterDoctors: errorWrapper(filterDoctors),
     changePassword : errorWrapper(changePassword),
    
 
