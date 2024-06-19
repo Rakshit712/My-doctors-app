@@ -13,13 +13,21 @@ async function signUp(req, res) {
         const userData = req.body;
     
         //console.log(userData)
-        const userExist = await User.findOne({ email: userData.email });
+        let userExist = await User.findOne({ email: userData.email });
         if (userExist) {
             return res.status(400).json({
                 status: "User already exist",
                 message: "User with this email already exist"
             })
         }
+        userExist = await User.findOne({ contactNo: userData.contactNo});
+        if(userExist){
+            return res.status(400).json({
+                status:"User already exist",
+                message:"User with this contact number already exist"
+            })
+        }
+
 
         const [isValidUser, message] = isValiduserData(userData);
         if (!isValidUser) {
@@ -102,7 +110,52 @@ async function logIn(req, res) {
 
 
 
+async function validateEmailAndContactNumber(req, res) {
+    try {
+        const { email, contactNo } = req.body;
 
+        if (email) {
+            const emailExist = await User.findOne({ email: email });
+            if (emailExist) {
+                return res.status(400).json({
+                    status: "User already exist",
+                    message: "User with this email already exist"
+                });
+            }
+            else{
+                return res.status(200).json({
+                    status: "success",
+                    message: "Good to go, User with email or contact number does not exist"
+                });
+            }
+        }
+
+        if (contactNo) {
+            const contactExist = await User.findOne({ contactNo: contactNo });
+            if (contactExist) {
+                return res.status(400).json({
+                    status: "User already exist",
+                    message: "User with this contact number already exist"
+                });
+            }
+            else {
+                return res.status(200).json({
+                    status: "success",
+                    message: "Good to go, User with email or contact number does not exist"
+                });
+            }
+        }
+
+       
+
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            status: err.status || "Something went wrong",
+            message: err.message || "Internal server error"
+        });
+    }
+}
 
 
 
@@ -171,6 +224,7 @@ module.exports = {
     signUp: errorWrapper(signUp)
     , logIn: errorWrapper(logIn),
     changePassword : errorWrapper(changePassword),
+    validateEmailAndCotactNumber:errorWrapper(validateEmailAndContactNumber)
    
 
 }

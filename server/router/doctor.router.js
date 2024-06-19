@@ -4,7 +4,8 @@ const { getAllDoctors, getDoctor, filterDoctors } = require("../controller/docto
 const Router = express.Router();
 
 Router.get("/",getAllDoctors)
-Router.get("/:id",getDoctor)
 Router.get("/filter",filterDoctors)
+Router.get("/:id",getDoctor)
+
 
 module.exports = Router;
