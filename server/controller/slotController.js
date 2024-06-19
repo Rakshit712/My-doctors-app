@@ -11,9 +11,9 @@ async function addSlot(req, res) {
 
         const startTime = slotData.startTime;
         const endTime = slotData.endTime;
-        
-        const [isValidSlot,message] = isValidSlotDetails(slotData);
-        if(!isValidSlot){
+
+        const [isValidSlot, message] = isValidSlotDetails(slotData);
+        if (!isValidSlot) {
             return res.status(403).json({
                 status: "invaled data",
                 message
@@ -27,7 +27,7 @@ async function addSlot(req, res) {
                 { startTime: { $lte: endTime }, endTime: { $gte: endTime } }
             ]
         });
-        
+
         if (existingSlot) {
             return res.status(400).json({
                 status: "failure",
@@ -35,7 +35,7 @@ async function addSlot(req, res) {
             })
         }
 
-       
+
         const newSlot = await Slot.create(slotData);
         if (newSlot) {
             return res.status(201).json({
@@ -91,53 +91,53 @@ async function deleteSlot(req, res) {
     }
 }
 
-async function getSlot(req,res){
+async function getSlot(req, res) {
     try {
         const doctorId = req.params.id;
-        const slot = await Slot.find({doctorId:doctorId})
+        const slots = await Slot.find({ doctorId: doctorId });
 
-        if(!slot){
-            return res.status(400).json(
-                {
-                    status:"failure",
-                    message:"no slot found for this doctor"
-                }
-            )
+        if (!slots || slots.length === 0) {
+            return res.status(400).json({
+                status: "failure",
+                message: "No slot found for this doctor"
+            });
         }
-        else{
-            if(slot.count<=slot.size){
-            return res.status(200).json(
-                {
-                    status:"success",
-                    message:"slot fetched successfully",
-                    total:slot.length,
-                    data:slot
-                }
-            )}
-            else{
-                return res.status(200).json(
-                    {
-                        status:"success",
-                        message:"all slots are booked....",
-                        data:[]
-                    }
-                )
 
+        const slotData = [];
+
+        slots.forEach(slot => {
+            if (slot.count < slot.size) {
+                slotData.push(slot);
             }
-        }
-    } catch (err) {
-        throw {
-            statusCode: err.statusCode || 500,
-            status: err.status || "Something went wrong",
-            message: err.message || "Internal server error"
+        });
 
+        if (slotData.length === 0) {
+            return res.status(200).json({
+                status: "success",
+                message: "All slots are booked.",
+                data: []
+            });
+        } else {
+            return res.status(200).json({
+                status: "success",
+                message: "Slots fetched successfully",
+                total: slotData.length,
+                data: slotData
+            });
         }
+
+    } catch (err) {
+        return res.status(err.statusCode || 500).json({
+            status: "failure",
+            message: err.message || "Internal server error"
+        });
     }
 }
+
 
 module.exports = {
     addSlot: errorWrapper(addSlot)
     , deleteSlot: errorWrapper(deleteSlot),
-    getSlot:errorWrapper(getSlot)
+    getSlot: errorWrapper(getSlot)
 
 }

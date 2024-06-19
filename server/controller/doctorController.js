@@ -38,7 +38,7 @@ async function getDoctor(req,res){
 try {
     const doctorId = req.params.id;
     
-    const doctor = await User.findOne({"_id":doctorId})
+    const doctor = await User.findOne({"_id":doctorId}).populate("profile.specialities")
     if(!doctor){
         return res.status(400).json(
             {
