@@ -16,6 +16,7 @@ server.use("/api/slot",Router.slotRouter);
 server.use("/api/specialities",Router.SpecialityRouter);
 server.use("/api/appointment",Router.appointmentRouter);
 server.use("/api/doctors",Router.doctorRouter);
+server.use("/api/payment",Router.bookingRouter)
 
 const mongoose = require('mongoose');
 

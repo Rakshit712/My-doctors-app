@@ -10,7 +10,7 @@ const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 
 const Stripe = stripe(stripeSecretKey);
 
-async function paymemt(req, res) {
+async function payment(req, res) {
   console.log(req.body);
   try {
     const { expiryDate, cardNumber, cvv, doctorId, slotId } = req.body;
@@ -81,5 +81,5 @@ async function paymemt(req, res) {
 }
 
 
-module.exports = paymemt;
+module.exports = payment;
 

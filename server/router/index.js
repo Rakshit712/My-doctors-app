@@ -4,5 +4,5 @@ const slotRouter = require("./slot.router");
 const SpecialityRouter = require("./speciality.router");
 const appointmentRouter = require("./appointment.router");
 const doctorRouter = require("./doctor.router");
-
-module.exports = {userRouter,profileRouter,slotRouter,SpecialityRouter,appointmentRouter,doctorRouter}
+const bookingRouter = require("./booking.router")
+module.exports = {userRouter,profileRouter,slotRouter,SpecialityRouter,appointmentRouter,doctorRouter, bookingRouter}
