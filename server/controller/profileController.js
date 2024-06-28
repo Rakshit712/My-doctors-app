@@ -7,16 +7,15 @@ async function updateProfile(req, res) {
     const id = req.params.id;
     const userData = req.body;
     try {
-
         const [isValidProfile, message] = isValiduserData(userData);
         if (!isValidProfile) {
             return res.status(403).json({
-                status: "invaled data",
+                status: "invalid data",
                 message
-            })
+            });
         }
 
-
+        // Separate profile fields from other fields
         const profileData = userData.profile;
         const otherFields = {};
 
@@ -25,42 +24,48 @@ async function updateProfile(req, res) {
                 otherFields[field] = userData[field];
             }
         });
-        const updatedProfile = await User.findByIdAndUpdate(
-            id,
-            { $set: { profile: profileData } },
 
-            { new: true }
-        );
-        await User.findByIdAndUpdate(
+        // Update profile fields separately
+        if (profileData) {
+            const existingUser = await User.findById(id);
+            const updatedProfile = { ...existingUser.profile.toObject(), ...profileData };
+
+            await User.findByIdAndUpdate(
+                id,
+                { $set: { profile: updatedProfile } },
+                { new: true }
+            );
+        }
+
+        // Update other fields
+        const updatedUser = await User.findByIdAndUpdate(
             id,
             { $set: otherFields },
             { new: true }
         );
 
-        if (updatedProfile) {
+        if (updatedUser) {
             return res.status(200).json({
                 status: "success",
                 message: "Profile updated successfully",
-                data: updatedProfile
-            })
+                data: updatedUser
+            });
         } else {
             return res.status(400).json({
                 status: "failure",
                 message: "Profile not updated",
                 data: null
-            })
+            });
         }
 
     } catch (err) {
-        throw {
-            statusCode: err.statusCode || 500,
+        return res.status(err.statusCode || 500).json({
             status: err.status || "Something went wrong",
             message: err.message || "Internal server error"
-
-        }
+        });
     }
-
 }
+
 
 async function getProfile(req, res) {
     try {
